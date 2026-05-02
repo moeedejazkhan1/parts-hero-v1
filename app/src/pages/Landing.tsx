@@ -154,19 +154,20 @@ export default function Landing() {
 
         <div className="max-w-7xl mx-auto px-4 lg:px-6 relative">
           {/* Badge */}
+                    {/* Badge */}
           <div className="flex justify-center mb-6">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20">
               <Sparkles className="w-4 h-4 text-cyan-400" />
-              <span className="text-sm text-cyan-400 font-medium">Introducing Parts Hero — The Future of Truck Parts Procurement</span>
+              <span className="text-sm text-cyan-400 font-medium">About Us / Inventor's Page — Due Diligence & Platform Overview</span>
             </div>
           </div>
 
           {/* Headline */}
-          <h1 className="text-4xl lg:text-7xl font-bold text-center leading-tight mb-6">
-            <span className="text-white">The Intelligence Platform</span>
+                    <h1 className="text-4xl lg:text-7xl font-bold text-center leading-tight mb-6">
+            <span className="text-white">Parts Hero by OrKa AI Labs</span>
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-500">
-              for Heavy-Duty Parts
+              Investor & Partner Overview
             </span>
           </h1>
 

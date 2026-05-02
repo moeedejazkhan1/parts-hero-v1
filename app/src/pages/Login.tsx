@@ -4,7 +4,6 @@ import { Mail, Lock, Eye, EyeOff, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 import type { UserRole } from '@/types';
-import { getCustomerType } from '@/types';
 
 interface RoleGroup {
   label: string;
@@ -47,7 +46,7 @@ const roleGroups: RoleGroup[] = [
 ];
 
 // Flat list for quick lookup
-const allRoles: UserRole[] = roleGroups.flatMap((g) => g.roles);
+
 
 // Role preview descriptions
 function getRolePreview(role: UserRole): string {

@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
 import type { UserRole, User } from '@/types';
-import { getCustomerType } from '@/types';
 
 interface AuthContextType {
   user: User | null;

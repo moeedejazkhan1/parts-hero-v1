@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { getCustomerType } from '@/types';
 import {
   Database, Upload, AlertTriangle, TrendingUp, Cloud,
   Star, MapPin, Calendar, DollarSign, Package, Clock,
@@ -15,7 +16,7 @@ export default function Vault() {
   const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
   const { user } = useAuth();
   const { showToast } = useToast();
-  const isAdmin = user?.role === 'Admin' || user?.role === 'Manufacturer';
+  const isAdmin = user ? getCustomerType(user.role) === 'manufacturer' : false;
 
   const overallHealth = Math.round(vendors.reduce((a, v) => a + v.healthScore, 0) / vendors.length);
 

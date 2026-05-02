@@ -1,134 +1,177 @@
-import { useState } from 'react';
 import { Link, useLocation } from 'react-router';
+import { useState} from 'react';
 import {
-  LayoutDashboard, Search, Truck, GraduationCap, Newspaper,
-  Tag, MapPin, Database, GitBranch, Menu, X, LogOut, MessageSquare,
+  LayoutDashboard, Search, MessageSquare,
+  Truck, Database, Tag, GraduationCap, Newspaper, Settings, LogOut,
+  ChevronDown, Star, Sun, Moon
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from '@/contexts/ToastContext';
+import { useTheme } from '@/contexts/ThemeContext';
 
-const navItems = [
-  { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { path: '/search', label: 'Search', icon: Search },
-  { path: '/chat', label: 'AI Chat', icon: MessageSquare },
-  { path: '/garage', label: 'Garage', icon: Truck },
-  { path: '/vault', label: 'Vault', icon: Database },
-  { path: '/academy', label: 'Academy', icon: GraduationCap },
-  { path: '/news', label: 'News', icon: Newspaper },
-  { path: '/promos', label: 'Promos', icon: Tag },
-  { path: '/deliveries', label: 'Deliveries', icon: MapPin },
+interface NavItem {
+  icon: React.ElementType;
+  label: string;
+  path: string;
+}
+
+const mainNav: NavItem[] = [
+  { icon: LayoutDashboard, label: 'Command Center', path: '/dashboard' },
+  { icon: Search, label: 'Part Search', path: '/search' },
+  { icon: MessageSquare, label: 'Chat / AI', path: '/chat' },
 ];
 
-const adminItems = [
-  { path: '/tree', label: 'Learning Tree', icon: GitBranch },
-  { path: '/tags', label: 'Meta Tags', icon: Tag },
+const dataNav: NavItem[] = [
+  { icon: Truck, label: 'Garage / Fleets', path: '/garage' },
+  { icon: Database, label: 'Vendor Vault', path: '/vault' },
+  { icon: Tag, label: 'Promos & Deals', path: '/promos' },
+  { icon: GraduationCap, label: 'Academy', path: '/academy' },
+  { icon: Newspaper, label: 'Newsroom', path: '/news' },
 ];
 
 export default function Navigation() {
-  const location = useLocation();
   const { user, logout } = useAuth();
-  const { showToast } = useToast();
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const { theme, toggleTheme } = useTheme();
+  const location = useLocation();
+  const [expanded, setExpanded] = useState(true);
+  const [profileOpen, setProfileOpen] = useState(false);
 
-  const isAdmin = user?.role === 'Admin' || user?.role === 'Manufacturer';
-  const allItems = isAdmin ? [...navItems, ...adminItems] : navItems;
+  const isLight = theme === 'light';
 
-  const handleLogout = () => {
-    logout();
-    showToast('Logged out successfully', 'info');
+  const navLinkClass = (path: string) => {
+    const active = location.pathname === path;
+    return `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group ${
+      active
+        ? isLight
+          ? 'bg-blue-50 text-blue-700 shadow-sm border border-blue-100'
+          : 'bg-white/10 text-white border border-white/10'
+        : isLight
+          ? 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+          : 'text-gray-400 hover:bg-white/5 hover:text-white'
+    }`;
+  };
+
+  const iconClass = (path: string) => {
+    const active = location.pathname === path;
+    return active
+      ? isLight ? 'text-blue-600' : 'text-cyan-400'
+      : isLight ? 'text-gray-400 group-hover:text-gray-600' : 'text-gray-500 group-hover:text-gray-300';
   };
 
   return (
     <>
-      {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex flex-col fixed left-0 top-0 h-screen w-[72px] bg-[#0A0F1C]/80 backdrop-blur-xl border-r border-white/5 z-40">
-        <div className="flex items-center justify-center h-16 border-b border-white/5">
-          <div className="text-[10px] font-bold leading-tight text-center">
-            <span className="text-white">P</span><span className="text-cyan-400">H</span>
-          </div>
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className={`lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg ${isLight ? 'bg-white text-gray-800 shadow-lg border border-gray-200' : 'bg-white/10 text-white backdrop-blur-md border border-white/10'}`}
+      >
+        {expanded ? <span className="text-sm font-bold">✕</span> : <span className="text-sm font-bold">☰</span>}
+      </button>
+
+      <nav
+        className={`fixed top-0 left-0 h-full z-40 flex flex-col transition-all duration-300 border-r ${
+          isLight
+            ? 'bg-white border-gray-200 shadow-xl'
+            : 'bg-[#0B1121]/95 backdrop-blur-xl border-white/10'
+        } ${expanded ? 'w-64 translate-x-0' : 'w-0 -translate-x-full lg:w-16 lg:translate-x-0'}`}
+      >
+        {/* Logo */}
+        <div className={`p-5 border-b ${isLight ? 'border-gray-100' : 'border-white/10'}`}>
+          <Link to="/dashboard" className="flex items-center gap-2">
+            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center flex-shrink-0">
+              <Star className="w-5 h-5 text-white" />
+            </div>
+            {expanded && (
+              <div>
+                <div className={`text-sm font-bold tracking-tight ${isLight ? 'text-gray-900' : 'text-white'}`}>
+                  <span className={isLight ? 'text-blue-600' : 'text-cyan-400'}>PARTS</span>HERO
+                </div>
+                <div className={`text-[10px] font-mono ${isLight ? 'text-gray-400' : 'text-gray-600'}`}>COMMAND CENTER</div>
+              </div>
+            )}
+          </Link>
         </div>
-        <nav className="flex-1 flex flex-col items-center gap-1 py-3">
-          {allItems.map(item => {
-            const isActive = location.pathname === item.path;
-            const Icon = item.icon;
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`relative flex flex-col items-center justify-center w-14 h-[52px] rounded-xl transition-all duration-200 group ${
-                  isActive
-                    ? 'bg-cyan-500/15 text-cyan-400 shadow-[0_0_16px_rgba(0,217,255,0.15)]'
-                    : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
-                }`}
-              >
-                <Icon className="w-[18px] h-[18px]" />
-                <span className="text-[9px] mt-0.5 font-medium leading-tight text-center px-0.5">{item.label}</span>
-                {isActive && (
-                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-cyan-400 rounded-r-full" />
-                )}
-              </Link>
-            );
-          })}
-        </nav>
-        <div className="flex flex-col items-center gap-2 py-3 border-t border-white/5">
-          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-[10px] font-bold text-white">
-            {user?.name?.[0] || 'U'}
-          </div>
+
+        {/* Main nav */}
+        <div className="flex-1 overflow-y-auto py-3 px-3 space-y-1">
+          {mainNav.map(item => (
+            <Link key={item.path} to={item.path} className={navLinkClass(item.path)}>
+              <item.icon className={`w-[18px] h-[18px] ${iconClass(item.path)}`} />
+              {expanded && <span className="flex-1 truncate">{item.label}</span>}
+            </Link>
+          ))}
+
+          {expanded && (
+            <div className={`pt-4 mt-4 border-t ${isLight ? 'border-gray-100' : 'border-white/10'}`}>
+              <div className={`px-3 mb-2 text-[10px] font-bold uppercase tracking-wider ${isLight ? 'text-gray-400' : 'text-gray-600'}`}>
+                Data & Intel
+              </div>
+            </div>
+          )}
+
+          {dataNav.map(item => (
+            <Link key={item.path} to={item.path} className={navLinkClass(item.path)}>
+              <item.icon className={`w-[18px] h-[18px] ${iconClass(item.path)}`} />
+              {expanded && <span className="flex-1 truncate">{item.label}</span>}
+            </Link>
+          ))}
+        </div>
+
+        {/* Bottom section */}
+        <div className={`p-3 border-t ${isLight ? 'border-gray-100' : 'border-white/10'} space-y-2`}>
+          {/* Theme Toggle */}
           <button
-            onClick={handleLogout}
-            className="flex flex-col items-center justify-center w-14 h-10 rounded-xl text-gray-500 hover:text-red-400 hover:bg-red-500/10 transition-all"
+            onClick={toggleTheme}
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+              isLight ? 'text-gray-600 hover:bg-gray-100' : 'text-gray-400 hover:bg-white/5 hover:text-white'
+            }`}
           >
-            <LogOut className="w-4 h-4" />
+            {isLight ? <Moon className="w-[18px] h-[18px]" /> : <Sun className="w-[18px] h-[18px]" />}
+            {expanded && <span>{isLight ? 'Dark Mode' : 'Light Mode'}</span>}
           </button>
-        </div>
-      </aside>
 
-      {/* Mobile Top Bar */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 h-14 bg-[#0A0F1C]/90 backdrop-blur-xl border-b border-white/5 z-40 flex items-center justify-between px-4">
-        <button onClick={() => setMobileOpen(!mobileOpen)} className="text-white">
-          {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
-        <div className="text-sm font-bold">
-          <span className="text-white">PARTS</span><span className="text-cyan-400">HERO</span>
-        </div>
-        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-xs font-bold text-white">
-          {user?.name?.[0] || 'U'}
-        </div>
-      </div>
+          {/* User */}
+          <div className="relative">
+            <button
+              onClick={() => setProfileOpen(!profileOpen)}
+              className={`w-full flex items-center gap-2.5 px-2 py-2 rounded-xl transition-all ${isLight ? 'hover:bg-gray-100' : 'hover:bg-white/5'}`}
+            >
+              <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+                <img src="/avatar-jordan.png" alt="" className="w-full h-full object-cover" />
+              </div>
+              {expanded && (
+                <div className="min-w-0 text-left flex-1">
+                  <div className={`text-xs font-semibold truncate ${isLight ? 'text-gray-800' : 'text-white'}`}>
+                    {user?.name || 'Jordan'}
+                  </div>
+                  <div className={`text-[10px] truncate ${isLight ? 'text-gray-400' : 'text-gray-500'}`}>
+                    {user?.shopName || 'RWC Phoenix'}
+                  </div>
+                </div>
+              )}
+              {expanded && <ChevronDown className={`w-3.5 h-3.5 flex-shrink-0 ${isLight ? 'text-gray-400' : 'text-gray-600'}`} />}
+            </button>
 
-      {/* Mobile Menu */}
-      {mobileOpen && (
-        <div className="lg:hidden fixed inset-0 top-14 bg-[#0A0F1C]/95 backdrop-blur-xl z-30 p-6">
-          <nav className="flex flex-col gap-1">
-            {allItems.map(item => {
-              const isActive = location.pathname === item.path;
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={() => setMobileOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                    isActive
-                      ? 'bg-cyan-500/15 text-cyan-400 border border-cyan-500/20'
-                      : 'text-gray-400 hover:text-white hover:bg-white/5'
+            {profileOpen && (
+              <div className={`absolute bottom-full left-0 right-0 mb-2 p-2 rounded-xl border shadow-lg z-50 ${
+                isLight ? 'bg-white border-gray-200' : 'bg-[#0F172A] border-white/10'
+              }`}>
+                <Link to="/settings" className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all ${
+                  isLight ? 'text-gray-700 hover:bg-gray-100' : 'text-gray-300 hover:bg-white/10'
+                }`}>
+                  <Settings className="w-4 h-4" /> Settings
+                </Link>
+                <button
+                  onClick={logout}
+                  className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all ${
+                    isLight ? 'text-red-600 hover:bg-red-50' : 'text-red-400 hover:bg-red-500/10'
                   }`}
                 >
-                  <Icon className="w-5 h-5" />
-                  <span className="font-medium">{item.label}</span>
-                </Link>
-              );
-            })}
-          </nav>
-          <button
-            onClick={() => { handleLogout(); setMobileOpen(false); }}
-            className="flex items-center gap-3 px-4 py-3 mt-4 rounded-xl text-red-400 hover:bg-red-500/10 transition-all"
-          >
-            <LogOut className="w-5 h-5" />
-            <span className="font-medium">Logout</span>
-          </button>
+                  <LogOut className="w-4 h-4" /> Sign Out
+                </button>
+              </div>
+            )}
+          </div>
         </div>
-      )}
+      </nav>
     </>
   );
 }
