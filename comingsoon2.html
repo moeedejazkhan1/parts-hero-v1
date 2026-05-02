@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Parts Hero by OrKa AI Labs — Coming Soon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --cyan: #06b6d4;
+      --cyan-bright: #22d3ee;
+      --cyan-glow: rgba(6, 182, 212, 0.25);
+      --violet: #8b5cf6;
+      --blue: #3b82f6;
+      --emerald: #10b981;
+      --amber: #f59e0b;
+      --rose: #f43f5e;
+      --bg: #0A0F1C;
+      --bg-elevated: #0F172A;
+      --glass: rgba(255, 255, 255, 0.035);
+      --glass-border: rgba(255, 255, 255, 0.06);
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: #fff;
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ===== ANIMATED BACKGROUND ===== */
+    .bg-mesh {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 70% 50% at 30% 20%, rgba(6,182,212,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 70%, rgba(139,92,246,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 50% at 50% 100%, rgba(59,130,246,0.06) 0%, transparent 60%);
+      animation: meshShift 20s ease-in-out infinite alternate;
+    }
+
+    @keyframes meshShift {
+      0% { filter: hue-rotate(0deg); }
+      50% { filter: hue-rotate(10deg); }
+      100% { filter: hue-rotate(-5deg); }
+    }
+
+    .bg-orbs {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.1;
+    }
+
+    .orb-1 { width: 600px; height: 600px; background: var(--cyan); top: -15%; left: 15%; animation: orb1 30s ease-in-out infinite; }
+    .orb-2 { width: 400px; height: 400px; background: var(--violet); top: 40%; right: -10%; animation: orb2 25s ease-in-out infinite; }
+    .orb-3 { width: 350px; height: 350px; background: var(--blue); bottom: -10%; left: 40%; animation: orb3 22s ease-in-out infinite; }
+
+    @keyframes orb1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(40px,-30px)} }
+    @keyframes orb2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-30px,20px)} }
+    @keyframes orb3 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(20px,30px)} }
+
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
+      background-size: 100px 100px;
+    }
+
+    /* ===== PARTICLES ===== */
+    .particles-wrap {
+      position: fixed;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      animation: pRise linear infinite;
+    }
+
+    @keyframes pRise {
+      0% { transform: translateY(110vh) scale(0); opacity: 0; }
+      8% { opacity: var(--p-op); }
+      92% { opacity: var(--p-op); }
+      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
+
+    /* ===== TRUCK ANIMATION ===== */
+    .truck-scene {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 140px;
+      z-index: 4;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .road {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 50px;
+      background: linear-gradient(to bottom, #1e293b, #0f172a);
+      border-top: 1px solid rgba(6,182,212,0.1);
+    }
+
+    .road-line {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 200%;
+      height: 2px;
+      background: repeating-linear-gradient(90deg, rgba(6,182,212,0.2) 0px, rgba(6,182,212,0.2) 30px, transparent 30px, transparent 70px);
+      animation: roadMove 1.5s linear infinite;
+    }
+
+    @keyframes roadMove { 0%{transform:translateX(0)} 100%{transform:translateX(-70px)} }
+
+    .semi-truck {
+      position: absolute;
+      bottom: 30px;
+      left: -250px;
+      width: 240px;
+      height: 85px;
+      animation: truckDrive 20s linear infinite;
+    }
+
+    @keyframes truckDrive { 0%{left:-250px} 100%{left:calc(100% + 250px)} }
+
+    .truck-cab {
+      position: absolute;
+      bottom: 15px;
+      right: 0;
+      width: 65px;
+      height: 50px;
+      background: linear-gradient(135deg, #1e293b, #334155);
+      border: 1px solid rgba(6,182,212,0.2);
+      border-radius: 8px 10px 4px 4px;
+    }
+
+    .truck-cab::before {
+      content: '';
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      width: 28px;
+      height: 20px;
+      background: rgba(6,182,212,0.1);
+      border: 1px solid rgba(6,182,212,0.2);
+      border-radius: 4px;
+    }
+
+    .truck-cab::after {
+      content: '';
+      position: absolute;
+      top: 32px;
+      right: -6px;
+      width: 6px;
+      height: 12px;
+      background: rgba(6,182,212,0.3);
+      border-radius: 0 3px 3px 0;
+      filter: blur(3px);
+    }
+
+    .truck-trailer {
+      position: absolute;
+      bottom: 15px;
+      left: 0;
+      width: 140px;
+      height: 55px;
+      background: linear-gradient(180deg, rgba(30,41,59,0.9), rgba(15,23,42,0.95));
+      border: 1px solid rgba(6,182,212,0.12);
+      border-radius: 4px;
+    }
+
+    .truck-trailer::before {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      height: 1px;
+      background: rgba(6,182,212,0.1);
+      box-shadow: 0 12px 0 rgba(6,182,212,0.08), 0 24px 0 rgba(6,182,212,0.05);
+    }
+
+    .wheel {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #334155, #1e293b);
+      border: 2px solid #475569;
+      bottom: 0;
+      animation: wSpin 0.6s linear infinite;
+    }
+
+    .wheel::before {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      border-radius: 50%;
+      border: 1.5px dashed rgba(6,182,212,0.3);
+    }
+
+    .wheel-f { right: 18px; }
+    .wheel-m { left: 55px; }
+    .wheel-r { left: 15px; }
+
+    @keyframes wSpin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+
+    .truck-headlight {
+      position: absolute;
+      bottom: 35px;
+      right: -5px;
+      width: 150px;
+      height: 30px;
+      background: linear-gradient(90deg, rgba(6,182,212,0.2), transparent);
+      clip-path: polygon(0 50%, 100% 0%, 100% 100%, 0 50%);
+      filter: blur(1px);
+      animation: beamPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes beamPulse { 0%,100%{opacity:0.5} 50%{opacity:0.8} }
+
+    .exhaust-smoke {
+      position: absolute;
+      bottom: 30px;
+      right: -8px;
+      width: 20px;
+      height: 20px;
+    }
+
+    .smoke {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: radial-gradient(circle, rgba(148,163,184,0.25), transparent);
+      border-radius: 50%;
+      animation: smokeUp 2s ease-out infinite;
+    }
+
+    .smoke:nth-child(2) { animation-delay: 0.5s; width: 14px; height: 14px; }
+    .smoke:nth-child(3) { animation-delay: 1s; width: 18px; height: 18px; }
+
+    @keyframes smokeUp {
+      0% { transform: translate(0, 0) scale(0.5); opacity: 0.5; }
+      100% { transform: translate(-40px, -30px) scale(2); opacity: 0; }
+    }
+
+    /* ===== MAIN ===== */
+    .main {
+      position: relative;
+      z-index: 10;
+      padding-bottom: 160px;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 6rem 2rem 4rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 2.5rem;
+      animation: fadeInDown 1s ease-out both;
+    }
+
+    .logo-box {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 1.1rem;
+      color: var(--bg);
+      box-shadow: 0 0 30px var(--cyan-glow);
+      animation: logoGlow 3s ease-in-out infinite;
+    }
+
+    @keyframes logoGlow {
+      0%,100% { box-shadow: 0 0 30px var(--cyan-glow); }
+      50% { box-shadow: 0 0 50px rgba(6,182,212,0.4); }
+    }
+
+    .logo-name { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.02em; }
+    .logo-tag { font-size: 0.7rem; color: var(--cyan); text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1.25rem;
+      border-radius: 999px;
+      background: rgba(6, 182, 212, 0.08);
+      border: 1px solid rgba(6, 182, 212, 0.15);
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--cyan);
+      margin-bottom: 2rem;
+      animation: fadeInUp 1s ease-out 0.2s both;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--cyan);
+      border-radius: 50%;
+      animation: badgePulse 2s ease-in-out infinite;
+    }
+
+    @keyframes badgePulse {
+      0%,100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(6,182,212,0.4); }
+      50% { opacity: 0.6; transform: scale(0.8); box-shadow: 0 0 0 8px rgba(6,182,212,0); }
+    }
+
+    .hero h1 {
+      font-size: clamp(2.8rem, 6vw, 5.2rem);
+      font-weight: 900;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      animation: fadeInUp 1s ease-out 0.4s both;
+    }
+
+    .hero h1 .gradient {
+      background: linear-gradient(135deg, var(--cyan), var(--violet), var(--blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      background-size: 200% 200%;
+      animation: gradShift 6s ease infinite;
+    }
+
+    @keyframes gradShift {
+      0%,100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .typing-cursor {
+      display: inline-block;
+      width: 3px;
+      height: 0.9em;
+      background: var(--cyan);
+      margin-left: 4px;
+      animation: blink 0.8s step-end infinite;
+      vertical-align: text-bottom;
+    }
+
+    @keyframes blink { 50% { opacity: 0; } }
+
+    .hero-desc {
+      font-size: 1.15rem;
+      color: #94a3b8;
+      line-height: 1.7;
+      max-width: 560px;
+      margin: 1.5rem auto 3rem;
+      animation: fadeInUp 1s ease-out 0.6s both;
+    }
+
+    /* Countdown */
+    .countdown {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 3rem;
+      animation: fadeInUp 1s ease-out 0.8s both;
+    }
+
+    .cd-box {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 1.5rem 2rem;
+      text-align: center;
+      min-width: 100px;
+      transition: all 0.3s ease;
+    }
+
+    .cd-box:hover { transform: translateY(-4px); border-color: rgba(6,182,212,0.2); }
+
+    .cd-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 0 20px rgba(6,182,212,0.2);
+    }
+
+    .cd-label { font-size: 0.7rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.12em; margin-top: 0.5rem; }
+    .cd-sep { font-size: 2rem; color: #475569; align-self: center; animation: sepBlink 1s step-end infinite; }
+    @keyframes sepBlink { 50% { opacity: 0; } }
+
+    /* Email */
+    .notify {
+      width: 100%;
+      max-width: 450px;
+      margin-bottom: 3rem;
+      animation: fadeInUp 1s ease-out 1s both;
+    }
+
+    .notify-label { text-align: center; font-size: 0.9rem; color: #94a3b8; margin-bottom: 1rem; }
+
+    .notify-form {
+      display: flex;
+      gap: 0.5rem;
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(20px);
+      border-radius: 16px;
+      padding: 0.5rem;
+    }
+
+    .email-input {
+      flex: 1;
+      padding: 0.875rem 1rem;
+      border-radius: 12px;
+      border: none;
+      background: transparent;
+      color: #fff;
+      font-size: 0.95rem;
+      font-family: inherit;
+      outline: none;
+    }
+
+    .email-input::placeholder { color: #475569; }
+    .email-input:focus { outline: 2px solid rgba(6,182,212,0.3); outline-offset: -2px; border-radius: 12px; }
+
+    .notify-btn {
+      padding: 0.875rem 1.75rem;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      color: var(--bg);
+      font-size: 0.95rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .notify-btn:hover { box-shadow: 0 0 30px rgba(6,182,212,0.4); transform: translateY(-1px); }
+
+    .success-msg { text-align: center; color: var(--emerald); font-size: 0.875rem; margin-top: 0.75rem; opacity: 0; transition: opacity 0.4s; }
+    .success-msg.show { opacity: 1; }
+
+    /* ===== SECTIONS ===== */
+    .section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 5rem 2rem;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 3.5rem;
+    }
+
+    .section-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 1rem;
+      border-radius: 999px;
+      background: rgba(6, 182, 212, 0.06);
+      border: 1px solid rgba(6, 182, 212, 0.12);
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--cyan);
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 1rem;
+    }
+
+    .section-desc {
+      font-size: 1.05rem;
+      color: #94a3b8;
+      max-width: 550px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* ===== FEATURE CARDS - 3x2 GRID ===== */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .feature-card {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 2rem;
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 24px;
+      padding: 1.5px;
+      background: linear-gradient(135deg, rgba(6,182,212,0.25), transparent 50%, rgba(139,92,246,0.15));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    .feature-card:hover::before { opacity: 1; }
+    .feature-card:hover { transform: translateY(-8px); border-color: rgba(6,182,212,0.15); }
+
+    .feature-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+    }
+
+    .fi-cyan { background: rgba(6,182,212,0.08); }
+    .fi-violet { background: rgba(139,92,246,0.08); }
+    .fi-emerald { background: rgba(16,185,129,0.08); }
+    .fi-amber { background: rgba(245,158,11,0.08); }
+    .fi-rose { background: rgba(244,63,94,0.08); }
+    .fi-blue { background: rgba(59,130,246,0.08); }
+
+    .feature-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.75rem; }
+    .feature-desc { font-size: 0.875rem; color: #94a3b8; line-height: 1.7; }
+
+    /* ===== APP MOCKUP CARDS - 2x2 GRID ===== */
+    .mockups-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    .mockup-card {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 1.5rem;
+      transition: all 0.4s ease;
+      overflow: hidden;
+    }
+
+    .mockup-card:hover { transform: translateY(-6px); border-color: rgba(6,182,212,0.2); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+
+    .mockup-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .win-dots { display: flex; gap: 6px; }
+    .win-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .wd-red { background: #ef4444; }
+    .wd-amber { background: #f59e0b; }
+    .wd-green { background: #22c55e; }
+    .mockup-title { font-size: 0.75rem; color: #64748b; }
+
+    .mockup-body {
+      background: rgba(0,0,0,0.3);
+      border-radius: 16px;
+      padding: 1rem;
+      min-height: 200px;
+    }
+
+    /* Dashboard mockup styles */
+    .dash-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; margin-bottom: 0.75rem; }
+    .dash-stat { background: rgba(255,255,255,0.04); border-radius: 10px; padding: 0.6rem; }
+    .dash-stat-label { font-size: 0.6rem; color: #64748b; margin-bottom: 0.25rem; }
+    .dash-stat-value { font-size: 0.9rem; font-weight: 700; color: #fff; font-family: 'JetBrains Mono', monospace; }
+    .dash-stat-trend { font-size: 0.55rem; color: var(--emerald); margin-top: 0.15rem; }
+    .dash-chart { background: rgba(255,255,255,0.03); border-radius: 10px; padding: 0.75rem; margin-bottom: 0.75rem; }
+    .dash-chart-title { font-size: 0.65rem; color: #64748b; margin-bottom: 0.5rem; }
+    .dash-bars { display: flex; align-items: end; gap: 4px; height: 50px; }
+    .dash-bar { flex: 1; background: linear-gradient(to top, var(--cyan), rgba(6,182,212,0.3)); border-radius: 3px 3px 0 0; min-height: 8px; }
+    .dash-alert { display: flex; align-items: center; gap: 0.5rem; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.15); border-radius: 8px; padding: 0.5rem; font-size: 0.7rem; color: #fca5a5; }
+
+    /* Chat mockup */
+    .chat-msg { display: flex; gap: 0.5rem; margin-bottom: 0.75rem; }
+    .chat-avatar { width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 700; }
+    .chat-user { background: rgba(255,255,255,0.1); color: #94a3b8; }
+    .chat-bot { background: linear-gradient(135deg, var(--violet), var(--cyan)); color: #fff; }
+    .chat-bubble { background: rgba(255,255,255,0.05); border-radius: 10px; padding: 0.5rem 0.75rem; font-size: 0.75rem; color: #cbd5e1; line-height: 1.4; flex: 1; }
+    .chat-bubble.bot { background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.15); }
+    .chat-hl { color: var(--cyan); font-weight: 600; }
+    .chat-input { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
+    .chat-input-field { flex: 1; background: rgba(255,255,255,0.04); border-radius: 8px; padding: 0.5rem; font-size: 0.7rem; color: #475569; }
+    .chat-send { width: 28px; height: 28px; background: linear-gradient(135deg, var(--violet), var(--cyan)); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 0.8rem; }
+
+    /* Search mockup */
+    .search-bar { display: flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.04); border-radius: 10px; padding: 0.5rem 0.75rem; margin-bottom: 0.75rem; }
+    .search-icon { width: 14px; height: 14px; border: 2px solid #475569; border-radius: 50%; position: relative; flex-shrink: 0; }
+    .search-icon::after { content: ''; position: absolute; width: 6px; height: 2px; background: #475569; bottom: -3px; right: -4px; transform: rotate(45deg); border-radius: 1px; }
+    .search-text { font-size: 0.75rem; color: #475569; }
+    .search-cursor { width: 2px; height: 12px; background: var(--cyan); animation: cursorBlink 1s step-end infinite; margin-left: 2px; }
+    .part-item { display: flex; align-items: center; gap: 0.75rem; background: rgba(255,255,255,0.03); border-radius: 10px; padding: 0.6rem; margin-bottom: 0.4rem; }
+    .part-img { width: 32px; height: 32px; background: linear-gradient(135deg, rgba(6,182,212,0.2), rgba(139,92,246,0.15)); border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; }
+    .part-info { flex: 1; }
+    .part-name { font-size: 0.7rem; color: #e2e8f0; font-weight: 500; }
+    .part-meta { font-size: 0.6rem; color: #64748b; margin-top: 0.15rem; }
+    .part-price { text-align: right; }
+    .part-hero { font-size: 0.75rem; color: var(--emerald); font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+    .part-msrp { font-size: 0.6rem; color: #475569; text-decoration: line-through; }
+
+    /* Vendor mockup */
+    .vendor-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+    .vendor-item { background: rgba(255,255,255,0.04); border-radius: 10px; padding: 0.6rem; text-align: center; transition: all 0.3s; }
+    .vendor-item:hover { background: rgba(255,255,255,0.08); transform: scale(1.05); }
+    .vendor-logo { width: 36px; height: 36px; background: rgba(255,255,255,0.08); border-radius: 8px; margin: 0 auto 0.4rem; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 700; }
+    .vendor-name { font-size: 0.65rem; color: #94a3b8; }
+    .vendor-health { font-size: 0.6rem; color: var(--emerald); margin-top: 0.2rem; }
+
+    /* ===== STATS ===== */
+    .stats-row {
+      display: flex;
+      justify-content: center;
+      gap: 3.5rem;
+      flex-wrap: wrap;
+      margin: 4rem 0;
+    }
+
+    .stat-item { text-align: center; }
+    .stat-num { font-family: 'JetBrains Mono', monospace; font-size: 2.2rem; font-weight: 700; color: var(--cyan); text-shadow: 0 0 20px rgba(6,182,212,0.2); }
+    .stat-label { font-size: 0.75rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0.5rem; }
+
+    /* ===== FOOTER ===== */
+    .footer {
+      text-align: center;
+      padding: 4rem 2rem 3rem;
+    }
+
+    .socials { display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem; }
+    .social {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #64748b;
+      transition: all 0.3s;
+      text-decoration: none;
+    }
+    .social:hover { border-color: var(--cyan); color: var(--cyan); transform: translateY(-3px); box-shadow: 0 0 20px rgba(6,182,212,0.1); }
+    .social svg { width: 18px; height: 18px; }
+
+    .footer-text { font-size: 0.8rem; color: #475569; }
+    .footer-text a { color: var(--cyan); text-decoration: none; transition: opacity 0.3s; }
+    .footer-text a:hover { opacity: 0.7; }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeInDown { from{opacity:0;transform:translateY(-30px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes fadeInUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+    .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+      .mockups-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .features-grid { grid-template-columns: 1fr; }
+      .countdown { gap: 0.5rem; }
+      .cd-box { padding: 1rem; min-width: 70px; }
+      .cd-num { font-size: 1.8rem; }
+      .stats-row { gap: 2rem; }
+      .notify-form { flex-direction: column; }
+      .notify-btn { width: 100%; }
+      .section { padding: 3rem 1.5rem; }
+      .hero { padding: 5rem 1.5rem 3rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Background -->
+  <div class="bg-mesh"></div>
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+  <div class="bg-grid"></div>
+  <div class="particles-wrap" id="particlesWrap"></div>
+
+  <!-- Truck -->
+  <div class="truck-scene">
+    <div class="road"><div class="road-line"></div></div>
+    <div class="semi-truck">
+      <div class="truck-trailer"></div>
+      <div class="truck-cab"></div>
+      <div class="wheel wheel-f"></div>
+      <div class="wheel wheel-m"></div>
+      <div class="wheel wheel-r"></div>
+      <div class="truck-headlight"></div>
+      <div class="exhaust-smoke">
+        <div class="smoke"></div>
+        <div class="smoke"></div>
+        <div class="smoke"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="logo">
+        <div class="logo-box">PH</div>
+        <div>
+          <div class="logo-name">Parts Hero</div>
+          <div class="logo-tag">by OrKa AI Labs</div>
+        </div>
+      </div>
+
+      <div class="badge">
+        <span class="badge-dot"></span>
+        Launching Q2 2026 — Something Big is Coming
+      </div>
+
+      <h1>
+        The Future of<br>
+        <span class="gradient">Truck Parts Intelligence</span><span class="typing-cursor"></span>
+      </h1>
+
+      <p class="hero-desc">
+        AI-powered procurement, real vendor data, and fleet management — 
+        all in one platform. Built by <strong style="color:var(--cyan);">OrKa AI Labs</strong> 
+        for the heavy-duty industry.
+      </p>
+
+      <div class="countdown">
+        <div class="cd-box">
+          <div class="cd-num" id="days">00</div>
+          <div class="cd-label">Days</div>
+        </div>
+        <span class="cd-sep">:</span>
+        <div class="cd-box">
+          <div class="cd-num" id="hours">00</div>
+          <div class="cd-label">Hours</div>
+        </div>
+        <span class="cd-sep">:</span>
+        <div class="cd-box">
+          <div class="cd-num" id="minutes">00</div>
+          <div class="cd-label">Minutes</div>
+        </div>
+        <span class="cd-sep">:</span>
+        <div class="cd-box">
+          <div class="cd-num" id="seconds">00</div>
+          <div class="cd-label">Seconds</div>
+        </div>
+      </div>
+
+      <div class="notify">
+        <p class="notify-label">Be the first to know when we launch</p>
+        <div class="notify-form">
+          <input type="email" class="email-input" placeholder="you@company.com" id="emailInput">
+          <button class="notify-btn" onclick="notifyMe()">Find Out More</button>
+        </div>
+        <p class="success-msg" id="successMsg">You're on the VIP list! We'll notify you at launch.</p>
+      </div>
+    </section>
+
+    <!-- FEATURES - 6 CARDS IN 3x2 GRID -->
+    <section class="section">
+      <div class="section-header reveal">
+        <div class="section-tag">Core Capabilities</div>
+        <h2 class="section-title">14 Modules. One Platform.</h2>
+        <p class="section-desc">Every tool your fleet needs — from AI chat to delivery tracking.</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card reveal">
+          <div class="feature-icon fi-cyan">🤖</div>
+          <div class="feature-title">AI Chat Assistant</div>
+          <div class="feature-desc">AI-powered parts intelligence trained on 150,000,000+ parts. Ask natural questions, get instant answers with part numbers, pricing, and stock.</div>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon fi-violet">🔍</div>
+          <div class="feature-title">Smart Part Search</div>
+          <div class="feature-desc">Interactive 3D truck diagram + 5-level category drill-down. Click any zone to find parts for that system.</div>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon fi-emerald">🚛</div>
+          <div class="feature-title">Fleet Garage</div>
+          <div class="feature-desc">Digital garage with VIN decoding, maintenance scheduling, DOT compliance alerts, and parts-to-truck matching.</div>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon fi-amber">🏛️</div>
+          <div class="feature-title">Vendor Vault</div>
+          <div class="feature-desc">200+ VENDOR PARTNERS with real logos, health scores, verification queues, and direct ordering integration.</div>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon fi-rose">📊</div>
+          <div class="feature-title">Analytics Dashboard</div>
+          <div class="feature-desc">Real-time stats, weekly activity charts, cost savings vs MSRP, trending parts, and proactive alerts.</div>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon fi-blue">🗺️</div>
+          <div class="feature-title">Delivery Tracking</div>
+          <div class="feature-desc">Live delivery tracking with ETAs, route alerts, weather impact analysis, and delay notifications.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- APP MOCKUPS - 4 CARDS IN 2x2 GRID -->
+    <section class="section">
+      <div class="section-header reveal">
+        <div class="section-tag">Platform Preview</div>
+        <h2 class="section-title">See What's Inside</h2>
+        <p class="section-desc">A glimpse of the Command Center, AI Chat, Part Search, and Vendor Vault.</p>
+      </div>
+
+      <div class="mockups-grid">
+        <!-- Dashboard -->
+        <div class="mockup-card reveal">
+          <div class="mockup-header">
+            <div class="win-dots"><div class="win-dot wd-red"></div><div class="win-dot wd-amber"></div><div class="win-dot wd-green"></div></div>
+            <span class="mockup-title">Command Center</span>
+          </div>
+          <div class="mockup-body">
+            <div class="dash-stats">
+              <div class="dash-stat"><div class="dash-stat-label">Total Parts</div><div class="dash-stat-value">150M+</div><div class="dash-stat-trend">+12% this week</div></div>
+              <div class="dash-stat"><div class="dash-stat-label">Savings</div><div class="dash-stat-value">Price Transparency</div><div class="dash-stat-trend">vs MSRP</div></div>
+              <div class="dash-stat"><div class="dash-stat-label">Deliveries</div><div class="dash-stat-value">8</div><div class="dash-stat-trend">3 en route</div></div>
+              <div class="dash-stat"><div class="dash-stat-label">Searches</div><div class="dash-stat-value">87</div><div class="dash-stat-trend">47 unique</div></div>
+            </div>
+            <div class="dash-chart">
+              <div class="dash-chart-title">Weekly Activity</div>
+              <div class="dash-bars">
+                <div class="dash-bar" style="height:35%"></div><div class="dash-bar" style="height:60%"></div><div class="dash-bar" style="height:25%"></div>
+                <div class="dash-bar" style="height:80%"></div><div class="dash-bar" style="height:55%"></div><div class="dash-bar" style="height:20%"></div><div class="dash-bar" style="height:15%"></div>
+              </div>
+            </div>
+            <div class="dash-alert"><span>⚠️</span><span>AZ DOT Brake Blitz: May 14 — Stock up now</span></div>
+          </div>
+        </div>
+
+        <!-- AI Chat -->
+        <div class="mockup-card reveal">
+          <div class="mockup-header">
+            <div class="win-dots"><div class="win-dot wd-red"></div><div class="win-dot wd-amber"></div><div class="win-dot wd-green"></div></div>
+            <span class="mockup-title">Parts Hero AI</span>
+          </div>
+          <div class="mockup-body">
+            <div class="chat-msg">
+              <div class="chat-avatar chat-user">U</div>
+              <div class="chat-bubble">What oil filter for a 2019 Freightliner Cascadia with DD15 engine?</div>
+            </div>
+            <div class="chat-msg">
+              <div class="chat-avatar chat-bot">AI</div>
+              <div class="chat-bubble bot">
+                For your Cascadia DD15, I recommend the <span class="chat-hl">Fleetguard LF14000NN</span>:<br><br>
+                Part # FLT-LF14000NN<br>
+                Hero Price <span style="color:var(--emerald);font-weight:700;">$24.50</span><br>
+                Stock: <span style="color:var(--emerald);">142 in stock</span>
+              </div>
+            </div>
+            <div class="chat-input">
+              <div class="chat-input-field">Ask about any truck part...</div>
+              <div class="chat-send">→</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Search -->
+        <div class="mockup-card reveal">
+          <div class="mockup-header">
+            <div class="win-dots"><div class="win-dot wd-red"></div><div class="win-dot wd-amber"></div><div class="win-dot wd-green"></div></div>
+            <span class="mockup-title">Part Search</span>
+          </div>
+          <div class="mockup-body">
+            <div class="search-bar">
+              <div class="search-icon"></div>
+              <span class="search-text">oil filter cascadia dd15</span>
+              <div class="search-cursor"></div>
+            </div>
+            <div class="part-item">
+              <div class="part-img">🔧</div>
+              <div class="part-info"><div class="part-name">Fleetguard LF14000NN</div><div class="part-meta">Oil Filter · Cummins ISX/DD15</div></div>
+              <div class="part-price"><div class="part-hero">$24.50</div><div class="part-msrp">$38.00</div></div>
+            </div>
+            <div class="part-item">
+              <div class="part-img">⚙️</div>
+              <div class="part-info"><div class="part-name">Baldwin B7444</div><div class="part-meta">Lube Spin-on · Heavy Duty</div></div>
+              <div class="part-price"><div class="part-hero">$18.75</div><div class="part-msrp">$29.99</div></div>
+            </div>
+            <div class="part-item">
+              <div class="part-img">🛞</div>
+              <div class="part-info"><div class="part-name">WIX 57702XP</div><div class="part-meta">XP Filter · Extended Life</div></div>
+              <div class="part-price"><div class="part-hero">$21.20</div><div class="part-msrp">$34.50</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vendor Vault -->
+        <div class="mockup-card reveal">
+          <div class="mockup-header">
+            <div class="win-dots"><div class="win-dot wd-red"></div><div class="win-dot wd-amber"></div><div class="win-dot wd-green"></div></div>
+            <span class="mockup-title">Vendor Vault</span>
+          </div>
+          <div class="mockup-body">
+            <div class="vendor-grid">
+              <div class="vendor-item"><div class="vendor-logo" style="color:#ef4444;font-size:0.55rem;">CUM</div><div class="vendor-name">Cummins</div><div class="vendor-health">96% health</div></div>
+              <div class="vendor-item"><div class="vendor-logo" style="color:#3b82f6;font-size:0.55rem;">ETN</div><div class="vendor-name">Eaton</div><div class="vendor-health">94% health</div></div>
+              <div class="vendor-item"><div class="vendor-logo" style="color:#06b6d4;font-size:0.55rem;">BDX</div><div class="vendor-name">Bendix</div><div class="vendor-health">93% health</div></div>
+              <div class="vendor-item"><div class="vendor-logo" style="color:#f43f5e;font-size:0.55rem;">FG</div><div class="vendor-name">Fleetguard</div><div class="vendor-health">95% health</div></div>
+              <div class="vendor-item"><div class="vendor-logo" style="color:#ef4444;font-size:0.55rem;">MTR</div><div class="vendor-name">Meritor</div><div class="vendor-health">91% health</div></div>
+              <div class="vendor-item"><div class="vendor-logo" style="color:#f59e0b;font-size:0.55rem;">BOS</div><div class="vendor-name">Bosch</div><div class="vendor-health">97% health</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-row reveal">
+        <div class="stat-item"><div class="stat-num">150M+</div><div class="stat-label">Parts Indexed</div></div>
+        <div class="stat-item"><div class="stat-num">17</div><div class="stat-label">Featured Vendors</div></div>
+        <div class="stat-item"><div class="stat-num">200+</div><div class="stat-label">VENDOR PARTNERS</div></div>
+        <div class="stat-item"><div class="stat-num">$3.2M</div><div class="stat-label">YTD Volume</div></div>
+        <div class="stat-item"><div class="stat-num">4.7</div><div class="stat-label">Avg Rating</div></div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer reveal">
+      <div class="socials">
+        <a href="#" class="social" aria-label="Twitter">
+          <svg fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>
+        <a href="#" class="social" aria-label="LinkedIn">
+          <svg fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        </a>
+        <a href="#" class="social" aria-label="Email">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        </a>
+      </div>
+      <p class="footer-text">
+        &copy; 2025 <a href="#">OrKa AI Labs</a>. All rights reserved.
+        <a href="#">Privacy</a> &middot; <a href="#">Terms</a> &middot; Phoenix, AZ
+      </p>
+    </footer>
+  </main>
+
+  <script>
+    // ===== Particles =====
+    const colors = ['rgba(6,182,212,', 'rgba(139,92,246,', 'rgba(59,130,246,', 'rgba(16,185,129,', 'rgba(245,158,11,'];
+    const wrap = document.getElementById('particlesWrap');
+    for (let i = 0; i < 60; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      const size = 2 + Math.random() * 5;
+      p.style.width = size + 'px';
+      p.style.height = size + 'px';
+      p.style.left = Math.random() * 100 + '%';
+      const op = 0.2 + Math.random() * 0.5;
+      const base = colors[Math.floor(Math.random() * colors.length)];
+      p.style.background = base + op + ')';
+      p.style.boxShadow = '0 0 ' + (size * 2) + 'px ' + base + (op * 0.5) + ')';
+      p.style.setProperty('--p-op', op);
+      p.style.animationDuration = (10 + Math.random() * 20) + 's';
+      p.style.animationDelay = (Math.random() * 15) + 's';
+      wrap.appendChild(p);
+    }
+
+    // ===== Countdown =====
+    const launch = new Date();
+    launch.setDate(launch.getDate() + 90);
+
+    function updateCD() {
+      const diff = launch - new Date();
+      if (diff <= 0) return;
+      const d = Math.floor(diff / 86400000);
+      const h = Math.floor((diff % 86400000) / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      document.getElementById('days').textContent = String(d).padStart(2,'0');
+      document.getElementById('hours').textContent = String(h).padStart(2,'0');
+      document.getElementById('minutes').textContent = String(m).padStart(2,'0');
+      document.getElementById('seconds').textContent = String(s).padStart(2,'0');
+    }
+    updateCD();
+    setInterval(updateCD, 1000);
+
+    // ===== Notify =====
+   function notifyMe() {
+  const input = document.getElementById('emailInput');
+  const msg = document.getElementById('successMsg');
+  const email = input.value.trim();
+
+  const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  if (!valid) {
+    input.style.outline = '2px solid #ef4444';
+    setTimeout(() => input.style.outline = '', 2000);
+    return;
+  }
+
+  emailjs.send("service_w58rjtm", "template_a4eplj8", {
+    user_email: email
+  })
+  .then(() => {
+    msg.classList.add('show');
+    input.value = '';
+    setTimeout(() => msg.classList.remove('show'), 5000);
+  })
+  .catch((err) => {
+    console.error("Email failed:", err);
+    alert("Email failed. Check console.");
+  });
+}
+    // ===== Scroll Reveal =====
+    const reveals = document.querySelectorAll('.reveal');
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => obs.observe(el));
+  </script>
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+  (function(){
+    emailjs.init("UeNkTlmIOJvyzv9a2");
+  })();
+</script>
+</body>
+</html>
