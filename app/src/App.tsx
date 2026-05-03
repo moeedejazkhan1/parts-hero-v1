@@ -6,7 +6,6 @@ import { ThemeProvider } from '@/contexts/ThemeContext';
 import Layout from '@/components/Layout';
 import Login from '@/pages/Login';
 import Landing from '@/pages/Landing';
-import About from '@/pages/About';
 import Dashboard from '@/pages/Dashboard';
 import Search from '@/pages/Search';
 import Garage from '@/pages/Garage';
@@ -17,6 +16,7 @@ import Promos from '@/pages/Promos';
 import Deliveries from '@/pages/Deliveries';
 import Tree from '@/pages/Tree';
 import Tags from '@/pages/Tags';
+import About from '@/pages/About';
 import Chat from '@/pages/Chat';
 import { useAuth } from '@/contexts/AuthContext';
 

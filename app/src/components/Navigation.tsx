@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router';
-import { useState} from 'react';
+import { useState } from 'react';
 import {
-  LayoutDashboard, Search, MessageSquare,
+  LayoutDashboard, Search, MessageSquare, ShoppingCart, ClipboardList,
   Truck, Database, Tag, GraduationCap, Newspaper, Settings, LogOut,
   ChevronDown, Star, Sun, Moon
 } from 'lucide-react';
@@ -12,12 +12,15 @@ interface NavItem {
   icon: React.ElementType;
   label: string;
   path: string;
+  badge?: number;
 }
 
 const mainNav: NavItem[] = [
   { icon: LayoutDashboard, label: 'Command Center', path: '/dashboard' },
   { icon: Search, label: 'Part Search', path: '/search' },
   { icon: MessageSquare, label: 'Chat / AI', path: '/chat' },
+  { icon: ClipboardList, label: 'Orders & Builds', path: '/orders' },
+  { icon: ShoppingCart, label: 'Build Sheet', path: '/cart', badge: 0 },
 ];
 
 const dataNav: NavItem[] = [
@@ -34,6 +37,7 @@ export default function Navigation() {
   const location = useLocation();
   const [expanded, setExpanded] = useState(true);
   const [profileOpen, setProfileOpen] = useState(false);
+  const cartCount = 0;
 
   const isLight = theme === 'light';
 
@@ -59,6 +63,7 @@ export default function Navigation() {
 
   return (
     <>
+      {/* Mobile hamburger */}
       <button
         onClick={() => setExpanded(!expanded)}
         className={`lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg ${isLight ? 'bg-white text-gray-800 shadow-lg border border-gray-200' : 'bg-white/10 text-white backdrop-blur-md border border-white/10'}`}
@@ -93,9 +98,22 @@ export default function Navigation() {
         {/* Main nav */}
         <div className="flex-1 overflow-y-auto py-3 px-3 space-y-1">
           {mainNav.map(item => (
-            <Link key={item.path} to={item.path} className={navLinkClass(item.path)}>
+            <Link
+              key={item.path}
+              to={item.path}
+              className={navLinkClass(item.path)}
+            >
               <item.icon className={`w-[18px] h-[18px] ${iconClass(item.path)}`} />
-              {expanded && <span className="flex-1 truncate">{item.label}</span>}
+              {expanded && (
+                <>
+                  <span className="flex-1 truncate">{item.label}</span>
+                  {item.label === 'Build Sheet' && cartCount > 0 && (
+                    <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${isLight ? 'bg-blue-600 text-white' : 'bg-cyan-500 text-white'}`}>
+                      {cartCount}
+                    </span>
+                  )}
+                </>
+              )}
             </Link>
           ))}
 
@@ -108,7 +126,11 @@ export default function Navigation() {
           )}
 
           {dataNav.map(item => (
-            <Link key={item.path} to={item.path} className={navLinkClass(item.path)}>
+            <Link
+              key={item.path}
+              to={item.path}
+              className={navLinkClass(item.path)}
+            >
               <item.icon className={`w-[18px] h-[18px] ${iconClass(item.path)}`} />
               {expanded && <span className="flex-1 truncate">{item.label}</span>}
             </Link>
@@ -121,8 +143,11 @@ export default function Navigation() {
           <button
             onClick={toggleTheme}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
-              isLight ? 'text-gray-600 hover:bg-gray-100' : 'text-gray-400 hover:bg-white/5 hover:text-white'
+              isLight
+                ? 'text-gray-600 hover:bg-gray-100'
+                : 'text-gray-400 hover:bg-white/5 hover:text-white'
             }`}
+            title={isLight ? 'Switch to Dark' : 'Switch to Light'}
           >
             {isLight ? <Moon className="w-[18px] h-[18px]" /> : <Sun className="w-[18px] h-[18px]" />}
             {expanded && <span>{isLight ? 'Dark Mode' : 'Light Mode'}</span>}
@@ -132,9 +157,11 @@ export default function Navigation() {
           <div className="relative">
             <button
               onClick={() => setProfileOpen(!profileOpen)}
-              className={`w-full flex items-center gap-2.5 px-2 py-2 rounded-xl transition-all ${isLight ? 'hover:bg-gray-100' : 'hover:bg-white/5'}`}
+              className={`w-full flex items-center gap-2.5 px-2 py-2 rounded-xl transition-all ${
+                isLight ? 'hover:bg-gray-100' : 'hover:bg-white/5'
+              }`}
             >
-              <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-200 to-amber-400 flex items-center justify-center text-amber-800 font-bold text-xs flex-shrink-0 overflow-hidden">
                 <img src="/avatar-jordan.png" alt="" className="w-full h-full object-cover" />
               </div>
               {expanded && (
@@ -143,11 +170,13 @@ export default function Navigation() {
                     {user?.name || 'Jordan'}
                   </div>
                   <div className={`text-[10px] truncate ${isLight ? 'text-gray-400' : 'text-gray-500'}`}>
-                    {user?.shopName || 'RWC Phoenix'}
+                    {user?.shopName || 'RWC Phoenix'} • {user?.role || 'Inside Sales'}
                   </div>
                 </div>
               )}
-              {expanded && <ChevronDown className={`w-3.5 h-3.5 flex-shrink-0 ${isLight ? 'text-gray-400' : 'text-gray-600'}`} />}
+              {expanded && (
+                <ChevronDown className={`w-3.5 h-3.5 flex-shrink-0 ${isLight ? 'text-gray-400' : 'text-gray-600'}`} />
+              )}
             </button>
 
             {profileOpen && (
